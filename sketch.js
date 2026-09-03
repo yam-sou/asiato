@@ -8,7 +8,7 @@ let people = [];
 let nextId = 0;
 
 // 足跡を出す間隔
-let footprintInterval = 90;
+let footprintInterval = 120;
 
 // 足跡の大きさ
 let footprintSize = 150;
