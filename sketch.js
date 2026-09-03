@@ -7,11 +7,19 @@ let footprints = [];
 let people = [];
 let nextId = 0;
 
+// =====================================
+// 設定
+// =====================================
+
 // 足跡を出す間隔
-let footprintInterval = 120;
+let footprintInterval = 20;
 
 // 足跡の大きさ
 let footprintSize = 150;
+
+// 足跡の最大数
+let maxFootprints = 50;
+
 
 // =====================================
 // 足跡画像
@@ -69,7 +77,15 @@ function draw() {
 
   // カメラ映像
   drawingContext.shadowBlur = 0;
-  image(video, 0, 0, width, height);
+
+  image(
+    video,
+    0,
+    0,
+    width,
+    height
+  );
+
 
   let updatedPeople = [];
 
@@ -86,28 +102,53 @@ function draw() {
 
     let pose = poses[i].pose;
 
+
     if (
       pose.leftAnkle &&
       pose.rightAnkle &&
       pose.score > 0.2
     ) {
 
+
+      // =====================================
       // 左足
-      let lx = pose.leftAnkle.x * sx;
-      let ly = pose.leftAnkle.y * sy;
+      // =====================================
 
+      let lx =
+        pose.leftAnkle.x * sx;
+
+      let ly =
+        pose.leftAnkle.y * sy;
+
+
+      // =====================================
       // 右足
-      let rx = pose.rightAnkle.x * sx;
-      let ry = pose.rightAnkle.y * sy;
+      // =====================================
+
+      let rx =
+        pose.rightAnkle.x * sx;
+
+      let ry =
+        pose.rightAnkle.y * sy;
 
 
+      // =====================================
       // 人の中心
-      let mx = (lx + rx) / 2;
-      let my = (ly + ry) / 2;
+      // =====================================
+
+      let mx =
+        (lx + rx) / 2;
+
+      let my =
+        (ly + ry) / 2;
 
 
+      // =====================================
       // 同じ人を探す
-      let person = findPerson(mx, my);
+      // =====================================
+
+      let person =
+        findPerson(mx, my);
 
 
       // =====================================
@@ -141,21 +182,23 @@ function draw() {
       else {
 
         // 左足の移動距離
-        let leftMove = dist(
-          lx,
-          ly,
-          person.leftX,
-          person.leftY
-        );
+        let leftMove =
+          dist(
+            lx,
+            ly,
+            person.leftX,
+            person.leftY
+          );
 
 
         // 右足の移動距離
-        let rightMove = dist(
-          rx,
-          ry,
-          person.rightX,
-          person.rightY
-        );
+        let rightMove =
+          dist(
+            rx,
+            ry,
+            person.rightX,
+            person.rightY
+          );
 
 
         // =====================================
@@ -163,11 +206,18 @@ function draw() {
         // =====================================
 
         if (
-          frameCount - person.lastFootprintFrame >= footprintInterval &&
-          (leftMove > 5 || rightMove > 5)
+          frameCount -
+          person.lastFootprintFrame >=
+          footprintInterval &&
+
+          (leftMove > 25 ||
+           rightMove > 25)
         ) {
 
-          // より大きく動いた足に足跡を出す
+
+          // =====================================
+          // より大きく動いた足に足跡
+          // =====================================
 
           if (leftMove > rightMove) {
 
@@ -177,7 +227,9 @@ function draw() {
               "left"
             );
 
-          } else {
+          }
+
+          else {
 
             addFootprint(
               rx,
@@ -189,21 +241,29 @@ function draw() {
 
 
           // 足跡を出したフレームを記録
-          person.lastFootprintFrame = frameCount;
+          person.lastFootprintFrame =
+            frameCount;
+
         }
 
 
+        // =====================================
         // 足の位置を更新
+        // =====================================
+
         person.leftX = lx;
         person.leftY = ly;
 
         person.rightX = rx;
         person.rightY = ry;
+
       }
 
 
       updatedPeople.push(person);
+
     }
+
   }
 
 
@@ -233,11 +293,13 @@ function draw() {
 
 function addFootprint(x, y, side) {
 
+
   // =====================================
-  // 6種類の足跡からランダムに選ぶ
+  // 6種類からランダムに選ぶ
   // =====================================
 
-  let randomImage = random(footprintImages);
+  let randomImage =
+    random(footprintImages);
 
 
   footprints.push({
@@ -252,6 +314,21 @@ function addFootprint(x, y, side) {
 
   });
 
+
+  // =====================================
+  // 最大数を超えたら
+  // 一番古い足跡を削除
+  // =====================================
+
+  if (
+    footprints.length >
+    maxFootprints
+  ) {
+
+    footprints.shift();
+
+  }
+
 }
 
 
@@ -263,13 +340,29 @@ function drawFootprint(f) {
 
   push();
 
-  translate(f.x, f.y);
+
+  // 足跡の位置
+  translate(
+    f.x,
+    f.y
+  );
+
 
   imageMode(CENTER);
 
 
   // =====================================
-  // 元画像の縦横比を計算
+  // 上下反転
+  // =====================================
+
+  scale(
+    1,
+    -1
+  );
+
+
+  // =====================================
+  // 元画像の縦横比
   // =====================================
 
   let ratio =
@@ -277,17 +370,21 @@ function drawFootprint(f) {
     f.image.width;
 
 
-  let w = footprintSize;
+  let w =
+    footprintSize;
 
   let h =
-    footprintSize * ratio;
+    footprintSize *
+    ratio;
 
 
   // =====================================
   // 左足
   // =====================================
 
-  if (f.side === "left") {
+  if (
+    f.side === "left"
+  ) {
 
     image(
       f.image,
@@ -302,12 +399,15 @@ function drawFootprint(f) {
 
   // =====================================
   // 右足
-  // 左足画像を左右反転
+  // 左右反転
   // =====================================
 
   else {
 
-    scale(-1, 1);
+    scale(
+      -1,
+      1
+    );
 
     image(
       f.image,
@@ -335,27 +435,35 @@ function findPerson(x, y) {
 
   let closest = null;
 
-  let minDist = threshold;
+  let minDist =
+    threshold;
 
 
-  for (let p of people) {
+  for (
+    let p of people
+  ) {
 
     let personX =
-      (p.leftX + p.rightX) / 2;
+      (p.leftX +
+       p.rightX) / 2;
 
     let personY =
-      (p.leftY + p.rightY) / 2;
+      (p.leftY +
+       p.rightY) / 2;
 
 
-    let d = dist(
-      x,
-      y,
-      personX,
-      personY
-    );
+    let d =
+      dist(
+        x,
+        y,
+        personX,
+        personY
+      );
 
 
-    if (d < minDist) {
+    if (
+      d < minDist
+    ) {
 
       minDist = d;
 
@@ -382,6 +490,7 @@ function windowResized() {
     windowHeight
   );
 
+
   video.size(
     windowWidth,
     windowHeight
@@ -396,7 +505,10 @@ function windowResized() {
 
 function keyPressed() {
 
-  if (key === "f" || key === "F") {
+  if (
+    key === "f" ||
+    key === "F"
+  ) {
 
     fullscreen(
       !fullscreen()
