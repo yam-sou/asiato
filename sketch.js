@@ -164,7 +164,7 @@ function draw() {
 
         if (
           frameCount - person.lastFootprintFrame >= footprintInterval &&
-          (leftMove > 25 || rightMove > 25)
+          (leftMove > 5 || rightMove > 5)
         ) {
 
           // より大きく動いた足に足跡を出す
