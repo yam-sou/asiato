@@ -210,8 +210,8 @@ function draw() {
           person.lastFootprintFrame >=
           footprintInterval &&
 
-          (leftMove > 25 ||
-           rightMove > 25)
+          (leftMove > 15 ||
+           rightMove > 15)
         ) {
 
 
